@@ -1,0 +1,364 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="" />
+  <meta name="author" content="Lachand Valentin" />
+
+  <title>Diverging Likert Scales</title>
+  <link href="css/bootstrap.css" rel="stylesheet" type="text/css" />
+  <link href="css/bootstrap-responsive.css" rel="stylesheet" type="text/css" />
+  <link href="css/docs.css" rel="stylesheet" type="text/css" />
+  <link href="js/google-code-prettify/prettify.css" rel="stylesheet" type="text/css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" type=
+  "text/javascript">
+</script>
+  <script src="js/bootstrap.min.js" type="text/javascript">
+</script>
+  <script src="js/FileSaver.min.js" type="text/javascript">
+</script>
+  <style type="text/css">
+/*<![CDATA[*/
+  .axis path,
+  .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+  }
+
+  /*]]>*/
+  </style>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js" type=
+  "text/javascript">
+</script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="index.html">Diverging likert scale</a>
+      </div>
+
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html">Plot a scale</a></li>
+
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </div>
+
+    <div class="panel-group">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a data-toggle="collapse" data-target="#collapseConfiguration" href=
+          "#collapseConfiguration"></a>
+
+          <h3 class="panel-title"><a data-toggle="collapse" data-target=
+          "#collapseConfiguration" href="#collapseConfiguration">Configuration</a></h3>
+        </div>
+
+        <div id="collapseConfiguration" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <label class="btn btn-primary btn-file">Browse file <input type="file"
+            accept=".csv" id="file" name="file" enctype="multipart/form-data" style=
+            "display: none;" ></label>
+            <label id="selectedFilename">No file selected</label>
+
+            <div class="checkbox">
+              <label><input type="checkbox" name="checkbox" id="checkbox_print" value=
+              "print_ready" onchange="printReady();" />Print ready</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a data-toggle="collapse" data-target="#collapseAdvanced" href=
+          "#collapseAdvanced"></a>
+
+          <h3 class="panel-title"><a data-toggle="collapse" data-target=
+          "#collapseAdvanced" href="#collapseAdvanced">Advanced configuration</a></h3>
+        </div>
+
+        <div id="collapseAdvanced" class="panel-collapse collapse in">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">Color selection</h4>
+            </div>
+
+            <div class="panel-body">
+              <input id="color1" type='color' class='basic' value='#c7001e' /> <input id=
+              "color2" type='color' class='basic' value='#f6a580' /> <input id="color3"
+              type='color' class='basic' value='#cccccc' /> <input id="color4" type=
+              'color' class='basic' value='#92c6db' /> <input id="color5" type='color'
+              class='basic' value='#086fad' />
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">Title and Labels</h4>
+            </div>
+
+            <div class="panel-body">
+              <label>Title<input type="text" class="form-control" id="title" value=
+              "Default title" /></label>
+            </div>
+
+            <div class="panel-body">
+              <label>Label for 1<input type="text" class="form-control" id="label1"
+              value="Strongly disagree" /></label> <label>Label for 2<input type="text"
+              class="form-control" id="label2" value="Disagree" /></label> <label>Label
+              for 3<input type="text" class="form-control" id="label3" value=
+              "Neither agree nor disagree" /></label> <label>Label for 4<input type=
+              "text" class="form-control" id="label4" value="Agree" /></label>
+              <label>Label for 5<input type="text" class="form-control" id="label5"
+              value="Strongly agree" /></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <button onclick="plot();" class="btn btn-primary btn-default">Plot</button>
+      <button class="btn btn btn-default" onclick="prepareDownload();">Plot and
+      download (SVG)</button>
+    </div>
+
+    <div id="figure" style="margin-bottom: 50px;"></div>
+  </div><script type="text/javascript">
+//<![CDATA[
+
+  function printReady () {
+
+  if (checkbox_print.checked){
+  document.getElementById("color1").value='#002c4c';
+  document.getElementById("color2").value='#0068b2';
+  document.getElementById("color3").value='#0094ff';
+  document.getElementById("color4").value='#72c4ff';
+  document.getElementById("color5").value='#d8efff';
+  }
+  else{
+  document.getElementById("color1").value='#c7001e';
+  document.getElementById("color2").value='#f6a580';
+  document.getElementById("color3").value='#cccccc';
+  document.getElementById("color4").value='#92c6db';
+  document.getElementById("color5").value='#086fad';
+  }
+
+  }
+
+  var loadedFile = ""
+
+  document.getElementById('file').addEventListener('change', readFile, false);
+
+       function readFile (evt) {
+           var files = evt.target.files;
+           var file = files[0]; 
+           var reader = new FileReader();
+           reader.onload = function() {
+             localStorage.setItem("tempcsv", this.result);       
+           }
+           reader.readAsText(file);
+           document.getElementById("selectedFilename").innerHTML="Selected file : "+file.name;
+        }
+
+  function preparePlot(){
+
+  //Clear previous plot
+  d3.select("svg").remove();
+
+  //Prepare color domain
+  var color = d3.scale.ordinal().range([document.getElementById("color1").value,
+  document.getElementById("color2").value,
+  document.getElementById("color3").value,
+  document.getElementById("color4").value,
+  document.getElementById("color5").value]);
+  return color
+  }
+
+  function plot() { 
+
+  var file = localStorage.getItem("tempcsv");
+  var color = preparePlot()
+  data = d3.csv.parse(file);
+  var margin = {top: 50, right: 20, bottom: 50, left: 300},
+    width = 800 - margin.left - margin.right,
+    height = - margin.top -margin.bottom + 50*data.length
+
+  var y = d3.scale.ordinal()
+    .rangeRoundBands([0, height], .3);
+
+  var x = d3.scale.linear()
+    .rangeRound([0, width]);
+
+  var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("top");
+
+  var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+
+  var svg = d3.select("#figure").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .attr("id", "d3-plot")
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    
+    svg.append("text")
+        .attr("x", ((width - margin.left) / 2))             
+        .attr("y", height + 20 )
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px")
+        .style("text-anchor", "middle")
+        .text(document.getElementById("title").value);
+
+  color.domain([document.getElementById("label1").value,
+  document.getElementById("label2").value,
+  document.getElementById("label3").value,
+  document.getElementById("label4").value,
+  document.getElementById("label5").value]);
+
+  data.forEach(function(d) {
+    // calc percentages
+    d[document.getElementById("label1").value] = +d[1]*100/d.N;
+    d[document.getElementById("label2").value] = +d[2]*100/d.N;
+    d[document.getElementById("label3").value] = +d[3]*100/d.N;
+    d[document.getElementById("label4").value] = +d[4]*100/d.N;
+    d[document.getElementById("label5").value] = +d[5]*100/d.N;
+    var x0 = -1*(d[document.getElementById("label3").value]/2+d[document.getElementById("label2").value]+d[document.getElementById("label1").value]);
+    var idx = 0;
+    d.boxes = color.domain().map(function(name) { return {name: name, x0: x0, x1: x0 += +d[name], N: +d.N, n: +d[idx += 1]}; });
+  });
+
+  var min_val = d3.min(data, function(d) {
+          return d.boxes["0"].x0;
+          });
+
+  var max_val = d3.max(data, function(d) {
+          return d.boxes["4"].x1;
+          });
+
+  x.domain([min_val, max_val]).nice();
+  y.domain(data.map(function(d) { return (d.Question); }));
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+
+  var vakken = svg.selectAll(".question")
+      .data(data)
+    .enter().append("g")
+      .attr("class", "bar")
+      .attr("transform", function(d) { return "translate(0," + y(d.Question) + ")"; });
+
+  var bars = vakken.selectAll("rect")
+      .data(function(d) { return d.boxes; })
+    .enter().append("g").attr("class", "subbar");
+
+  bars.append("rect")
+      .attr("height", 20) //y.rangeBand()
+      .attr("x", function(d) { return x(d.x0); })
+      .attr("width", function(d) { return x(d.x1) - x(d.x0); })
+      .style("fill", function(d) { return color(d.name); });
+
+  bars.append("text")
+      .attr("x", function(d) { return x(d.x0); })
+      .attr("y", 10)//y.rangeBand()/2
+      .attr("dy", "0.4em")
+      .style("font" ,"20px sans-serif")
+      .style("text-anchor", "begin")
+      .style("color", function(d) { if (d.n<2) {return "000";} else {return "black";} })
+      .text(function(d) { return d.n !== 0 && (d.x1-d.x0)>3 ? d.n : "" });
+
+  vakken.insert("rect",":first-child")
+      .attr("height", 20)//y.rangeBand()
+      .attr("x", "1")
+      .attr("width", width)
+      .attr("fill-opacity", "0.5")
+      .style("fill", "#F5F5F5")
+      .attr("class", function(d,index) { return index%2==0 ? "even" : "uneven"; });
+
+  svg.append("g")
+      .attr("class", "y axis")
+  .append("line")
+      .attr("x1", x(0))
+      .attr("x2", x(0))
+      .attr("y2", height);
+
+  var startp = svg.append("g").attr("class", "legendbox").attr("id", "mylegendbox");
+  // this is not nice, we should calculate the bounding box and use that
+  var legend_tabs = [0, 120, 200, 375, 450];
+  var legend = startp.selectAll(".legend")
+      .data(color.domain().slice())
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(" + legend_tabs[i] + ",-45)"; });
+
+  legend.append("rect")
+      .attr("x", 0)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", color);
+
+  legend.append("text")
+      .attr("x", 22)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .style("text-anchor", "begin")
+      .style("font" ,"10px sans-serif")
+      .text(function(d) { return d; });
+
+  d3.selectAll(".axis path")
+      .style("fill", "none")
+      .style("stroke", "#000")
+      .style("shape-rendering", "crispEdges")
+
+  d3.selectAll(".axis line")
+      .style("fill", "none")
+      .style("stroke", "#000")
+      .style("shape-rendering", "crispEdges")
+
+  var movesize = width/2 - startp.node().getBBox().width/2;
+  d3.selectAll(".legendbox").attr("transform", "translate(" + movesize  + ",0)");
+
+  }
+
+  function prepareDownload() { 
+  plot()
+  //get svg element.
+  var svgelt = document.getElementById("d3-plot");
+  //get svg source.
+  var serializer = new XMLSerializer();
+  var source = serializer.serializeToString(svgelt);
+
+  //add name spaces.
+  if(!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)){
+    source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+  }
+  if(!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)){
+    source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
+  }
+
+  //add xml declaration
+  source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
+
+  //set url value to a element's href attribute.
+  //document.getElementById("downloadButton").href = url;
+  //you can download svg file by right click menu.
+  var file = new File([source], "DivergingLikert.svg", {type: "image/svg+xml"});
+  saveAs(file);
+  }
+
+  //]]>
+  </script>
+</body>
+</html>
