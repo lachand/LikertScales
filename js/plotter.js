@@ -29,17 +29,28 @@ export function printReady() {
 
 }
 
-export function readFile(evt) {
-    let files = evt.target.files;
-    let file = files[0];
-    let reader = new FileReader();
-    reader.onload = function () {
-        localStorage.setItem("tempcsv", this.result);
-    }
-    reader.readAsText(file);
-    document.getElementById("selectedFilename").innerHTML = "Selected file : " + file.name;
+function purgeData() {
+    document.getElementById('labelDiv').innerHTML = '';
+    document.getElementById('colorDiv').innerHTML = '';
+    document.getElementById('headColors').innerHTML = '';
+}
 
-    file = localStorage.getItem("tempcsv");
+export function readFile(evt) {
+    console.log("purge data");
+    purgeData();
+    let files = evt.target.files;
+    let fileToRead = files[0];
+    let reader = new FileReader();
+    reader.addEventListener('loadend', () => {
+        localStorage.setItem("tempcsv", reader.result);
+    });
+    //reader.onload = function () {
+    //    localStorage.setItem("tempcsv", this.result);
+    //}
+    reader.readAsText(fileToRead);
+    document.getElementById("selectedFilename").innerHTML = "Selected file : " + fileToRead.name;
+
+    let file = localStorage.getItem("tempcsv");
     let color = preparePlot();
     data = d3.csv.parse(file);
     nbColumns = (Object.keys(data[0]).length - 2);
