@@ -43,57 +43,56 @@ export function readFile(evt) {
     let reader = new FileReader();
     reader.addEventListener('loadend', () => {
         localStorage.setItem("tempcsv", reader.result);
+        let file = localStorage.getItem("tempcsv");
+        data = d3.csv.parse(file);
+        nbColumns = (Object.keys(data[0]).length - 2);
+
+        for (let i = 0; i < nbColumns; i++) {
+            let colorNode = document.createElement("input");
+            colorNode.id = `color${i + 1}`;
+            colorNode.type = 'color';
+            colorNode.class = 'basic';
+            colorNode.addEventListener("change", plot);
+
+            let labelNode = document.createElement("label");
+            let labelNodeTmp = document.createTextNode(`Label for ${i+1}`);
+            labelNode.id = `labelContainer${i+1}`;
+            let inputLabelNode = document.createElement("input");
+            inputLabelNode.class = "form-control";
+            inputLabelNode.id = `label${i+1}`;
+            inputLabelNode.value = `label ${i+1}`;
+            inputLabelNode.addEventListener("change", autoplot);
+            labelNode.appendChild(labelNodeTmp);
+            labelNode.appendChild(inputLabelNode);
+            document.getElementById('labelDiv').appendChild(labelNode);
+
+            if (nbColumns === 5) {
+                colorNode.value = colors5[`${i}`];
+            } else if (nbColumns === 7) {
+                colorNode.value = colors7[`${i}`];
+            }
+            document.getElementById('colorDiv').appendChild(colorNode);
+
+        }
+
+        let buttonColor = document.createElement("button");
+        let buttonText = document.createTextNode("Reset colors");
+        buttonColor.appendChild(buttonText);
+        buttonColor.addEventListener("click", () => {
+            printReady();
+            plot();
+        });
+        document.getElementById('headColors').appendChild(buttonColor);
+
+        let color = preparePlot();
+
+        plot();
     });
     //reader.onload = function () {
     //    localStorage.setItem("tempcsv", this.result);
     //}
     reader.readAsText(fileToRead);
     document.getElementById("selectedFilename").innerHTML = "Selected file : " + fileToRead.name;
-
-    let file = localStorage.getItem("tempcsv");
-    let color = preparePlot();
-    data = d3.csv.parse(file);
-    nbColumns = (Object.keys(data[0]).length - 2);
-
-    for (let i = 0; i < nbColumns; i++) {
-        let colorNode = document.createElement("input");
-        colorNode.id = `color${i + 1}`;
-        colorNode.type = 'color';
-        colorNode.class = 'basic';
-        colorNode.addEventListener("change", plot);
-
-        let labelNode = document.createElement("label");
-        let labelNodeTmp = document.createTextNode(`Label for ${i+1}`);
-        labelNode.id = `labelContainer${i+1}`;
-        let inputLabelNode = document.createElement("input");
-        inputLabelNode.class = "form-control";
-        inputLabelNode.id = `label${i+1}`;
-        inputLabelNode.value = `label ${i+1}`;
-        inputLabelNode.addEventListener("change", autoplot);
-        labelNode.appendChild(labelNodeTmp);
-        labelNode.appendChild(inputLabelNode);
-        document.getElementById('labelDiv').appendChild(labelNode);
-
-        if (nbColumns === 5) {
-            colorNode.value = colors5[`${i}`];
-        } else if (nbColumns === 7) {
-            colorNode.value = colors7[`${i}`];
-        }
-        document.getElementById('colorDiv').appendChild(colorNode);
-
-    }
-
-    let buttonColor = document.createElement("button");
-    let buttonText = document.createTextNode("Reset colors");
-    buttonColor.appendChild(buttonText);
-    buttonColor.addEventListener("click", () => {
-        printReady();
-        plot();
-    });
-    document.getElementById('headColors').appendChild(buttonColor);
-
-    plot();
-
 }
 
 export function autoplot() {
