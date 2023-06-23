@@ -190,9 +190,9 @@ export function plot() {
 
         var x0 = 0;
         if (nbColumns === 5) {
-                x0 = -1 * (d[document.getElementById("label4").value]/2 + d[document.getElementById("label3").value] +  d[document.getElementById("label2").value] + d[document.getElementById("label1").value]);
+                x0 = -1 * (d[document.getElementById("label4").value] + d[document.getElementById("label3").value] +  d[document.getElementById("label2").value] + d[document.getElementById("label1").value]);
             } else if (nbColumns === 7) {
-                x0 = -1 * (d[document.getElementById("label3").value]/2 + d[document.getElementById("label2").value] +  d[document.getElementById("label1").value]);
+                x0 = -1 * (d[document.getElementById("label3").value] + d[document.getElementById("label2").value] +  d[document.getElementById("label1").value]);
             } else if (nbColumns === 4) {
                 x0 = -1 * (d[document.getElementById("label3").value] +  d[document.getElementById("label2").value] + d[document.getElementById("label1").value]);
             } else if (nbColumns === 6) {
