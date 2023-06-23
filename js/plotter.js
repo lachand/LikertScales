@@ -300,7 +300,7 @@ export function plot() {
     }
     let neededSpace = nbColumns * 40 + 7 * nbChar;
     console.log(nbChar, neededSpace, spaceByElm);
-    let spaceBeetween = (1000 - neededSpace) / (nbColumns - 1);
+    let spaceBeetween = (800 - neededSpace) / (nbColumns - 1);
     // this is not nice, we should calculate the bounding box and use that
 
     let legend_tabs = [0];
