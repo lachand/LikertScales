@@ -198,6 +198,7 @@ export function plot() {
             } else if (nbColumns === 6) {
                 x0 = -1 * (d[document.getElementById("label4").value] + d[document.getElementById("label3").value] +  d[document.getElementById("label2").value] + d[document.getElementById("label1").value]);
             }
+        x0 = x0-100;
         console.log(nbColumns);
         console.log(x0);
          var idx = 0;
