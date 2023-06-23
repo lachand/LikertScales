@@ -80,6 +80,10 @@ export function readFile(evt) {
                 colorNode.value = colors5[`${i}`];
             } else if (nbColumns === 7) {
                 colorNode.value = colors7[`${i}`];
+            } else if (nbColumns === 4) {
+                colorNode.value = colors4[`${i}`];
+            } else if (nbColumns === 6) {
+                colorNode.value = colors6[`${i}`];
             }
             document.getElementById('colorDiv').appendChild(colorNode);
 
@@ -139,7 +143,7 @@ export function plot() {
     var color = preparePlot();
     data = d3.csv.parse(file);
     var margin = {top: 50, right: 20, bottom: 50, left: 300},
-        width = 800 - margin.left - margin.right,
+        width = 1000 - margin.left - margin.right,
         height = -margin.top - margin.bottom + 50 * data.length
 
     var y = d3.scale.ordinal()
@@ -184,7 +188,7 @@ export function plot() {
             d[document.getElementById(`label${i+1}`).value] = +d[i+1] * 100 / d.N;
         }
 
-        var x0 = -1 * (d[document.getElementById("label4").value] / 2 + d[document.getElementById("label3").value] +  d[document.getElementById("label2").value] + d[document.getElementById("label1").value]);
+        var x0 = -1 * (d[document.getElementById("label4").value] + d[document.getElementById("label3").value] +  d[document.getElementById("label2").value] + d[document.getElementById("label1").value]) /2;
         var idx = 0;
         d.boxes = color.domain().map(function (name) {
             return {name: name, x0: x0, x1: x0 += +d[name], N: +d.N, n: +d[idx += 1]};
