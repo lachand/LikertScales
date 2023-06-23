@@ -244,7 +244,7 @@ export function plot() {
     bars.append("rect")
         .attr("height", 20) //y.rangeBand()
         .attr("x", function (d) {
-            return x(d.x0-50);
+            return x(d.x0);
         })
         .attr("width", function (d) {
             return x(d.x1) - x(d.x0);
