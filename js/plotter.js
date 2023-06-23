@@ -198,7 +198,6 @@ export function plot() {
             } else if (nbColumns === 6) {
                 x0 = -1 * (d[document.getElementById("label4").value] + d[document.getElementById("label3").value] +  d[document.getElementById("label2").value] + d[document.getElementById("label1").value]);
             }
-        x0 = x0-100;
         console.log(nbColumns);
         console.log(x0);
          var idx = 0;
@@ -245,7 +244,7 @@ export function plot() {
     bars.append("rect")
         .attr("height", 20) //y.rangeBand()
         .attr("x", function (d) {
-            return x(d.x0);
+            return x(d.x0-50);
         })
         .attr("width", function (d) {
             return x(d.x1) - x(d.x0);
@@ -296,7 +295,7 @@ export function plot() {
     console.log(nbColumns);
     for (let cpt = 1; cpt < (nbColumns + 1); cpt++) {
         nbChar = nbChar + document.getElementById(`label${cpt}`).value.length;
-        spaceByElm[cpt-1] = 40 + document.getElementById(`label${cpt}`).value.length * 7
+        spaceByElm[cpt-1] = 40 + document.getElementById(`label${cpt}`).value.length * nbColumns;
     }
     let neededSpace = nbColumns * 40 + 7 * nbChar;
     console.log(nbChar, neededSpace, spaceByElm);
