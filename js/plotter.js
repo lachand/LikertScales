@@ -198,6 +198,8 @@ export function plot() {
             } else if (nbColumns === 6) {
                 x0 = -1 * (d[document.getElementById("label4").value] + d[document.getElementById("label3").value] +  d[document.getElementById("label2").value] + d[document.getElementById("label1").value]);
             }
+        console.log(nbColumns);
+        console.log(x0);
          var idx = 0;
         d.boxes = color.domain().map(function (name) {
             return {name: name, x0: x0, x1: x0 += +d[name], N: +d.N, n: +d[idx += 1]};
@@ -312,7 +314,6 @@ export function plot() {
         .enter().append("g")
         .attr("class", "legend")
         .attr("transform", function (d, i) {
-            console.log(i, legend_tabs);
             return "translate(" + legend_tabs[i] + ",-45)";
         });
 
