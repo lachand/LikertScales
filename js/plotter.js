@@ -295,11 +295,12 @@ export function plot() {
     console.log(nbColumns);
     for (let cpt = 1; cpt < (nbColumns + 1); cpt++) {
         nbChar = nbChar + document.getElementById(`label${cpt}`).value.length;
+        console.log(nbChar);
         spaceByElm[cpt-1] = 40 + document.getElementById(`label${cpt}`).value.length * nbColumns;
     }
     let neededSpace = nbColumns * 40 + 7 * nbChar;
     console.log(nbChar, neededSpace, spaceByElm);
-    let spaceBeetween = (500 - neededSpace) / (nbColumns - 1);
+    let spaceBeetween = (1000 - neededSpace) / (nbColumns - 1);
     // this is not nice, we should calculate the bounding box and use that
 
     let legend_tabs = [0];
