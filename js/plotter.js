@@ -188,8 +188,17 @@ export function plot() {
             d[document.getElementById(`label${i+1}`).value] = +d[i+1] * 100 / d.N;
         }
 
-        var x0 = -1 * (d[document.getElementById("label4").value] + d[document.getElementById("label3").value] +  d[document.getElementById("label2").value] + d[document.getElementById("label1").value]) /2;
-        var idx = 0;
+        var x0 = 0;
+        if (nbColumns === 5) {
+                x0 = -1 * (d[document.getElementById("label4").value]/2 + d[document.getElementById("label3").value] +  d[document.getElementById("label2").value] + d[document.getElementById("label1").value]);
+            } else if (nbColumns === 7) {
+                x0 = -1 * (d[document.getElementById("label3").value]/2 + d[document.getElementById("label2").value] +  d[document.getElementById("label2").value];
+            } else if (nbColumns === 4) {
+                x0 = -1 * (d[document.getElementById("label3").value] +  d[document.getElementById("label2").value] + d[document.getElementById("label1").value]);
+            } else if (nbColumns === 6) {
+                x0 = -1 * (d[document.getElementById("label4").value] + d[document.getElementById("label3").value] +  d[document.getElementById("label2").value] + d[document.getElementById("label1").value]);
+            }
+         var idx = 0;
         d.boxes = color.domain().map(function (name) {
             return {name: name, x0: x0, x1: x0 += +d[name], N: +d.N, n: +d[idx += 1]};
         });
