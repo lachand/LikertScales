@@ -1,7 +1,9 @@
 export let nbColumns = 0;
 export let data = [];
 export let colors5 = ['#c7001e', '#ca6675', '#cccccc', '#6a9ebd', '#086fad'];
+export let colors4 = ['#c7001e', '#ca6675', '#6a9ebd', '#086fad'];
 export let colors7 = ['#c7001e', '#c94458', '#ca8892', '#cccccc', '#8badc2', '#498eb7', '#086fad'];
+export let colors6 = ['#c7001e', '#c94458', '#ca8892', '#8badc2', '#498eb7', '#086fad'];
 export let loadedFile = '';
 export let document;
 export let timeSinceLastChange = 0;
@@ -14,16 +16,24 @@ export function printReady() {
     if (checkbox_print.checked) {
         colors5 = ['#002c4c', '#0068b2', '#0094ff', '#72c4ff', '#d8efff'];
         colors7 = ['#002c4c', '#114267', '#2a5b83', '#4d799e', '#789bb9', '#adc1d5', '#eaedf0'];
+        colors4 = ['#002c4c', '#0068b2', '#72c4ff', '#d8efff'];
+        colors6 = ['#002c4c', '#114267', '#2a5b83', '#789bb9', '#adc1d5', '#eaedf0'];
     }
     else {
         colors5 = ['#c7001e', '#ca6675', '#cccccc', '#6a9ebd', '#086fad'];
         colors7 = ['#c7001e', '#c94458', '#ca8892', '#cccccc', '#8badc2', '#498eb7', '#086fad'];
+        colors4 = ['#c7001e', '#ca6675', '#6a9ebd', '#086fad'];
+        colors6 = ['#c7001e', '#c94458', '#ca8892', '#8badc2', '#498eb7', '#086fad'];
     }
     for (let i = 0; i < nbColumns; i++) {
         if (nbColumns === 5) {
             document.getElementById(`color${i + 1}`).value = colors5[i];
         } else if (nbColumns === 7) {
             document.getElementById(`color${i + 1}`).value = colors7[i];
+        } else if (nbColumns === 4) {
+            document.getElementById(`color${i + 1}`).value = colors4[i];
+        } else if (nbColumns === 6) {
+            document.getElementById(`color${i + 1}`).value = colors6[i];
         }
     }
 
